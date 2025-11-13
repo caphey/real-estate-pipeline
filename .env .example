@@ -1,0 +1,7 @@
+# Clé d'API gratuite d'Alpha Vantage
+API_KEY=VOTRE_CLE_API_ICI
+
+# Identifiants pour la base de données Docker
+DB_USER=postgres
+DB_PASSWORD=realreal
+DB_NAME=stock_data
