@@ -82,6 +82,10 @@ jobs:
           dbt run --project-dir ./dbt_stock_project
       
       - name: Tester la qualité des données (dbt test)
+        env:
+          DBT_USER: ${{ secrets.DB_USER }}
+          DBT_PASS: ${{ secrets.DB_PASSWORD }}
+          DBT_DBNAME: ${{ secrets.DB_NAME }}
         run: |
           source venv/bin/activate
           dbt test --project-dir ./dbt_stock_project
