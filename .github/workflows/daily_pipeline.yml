@@ -1,0 +1,73 @@
+name: Pipeline de Données Quotidienne (ELT)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'  # Tous les jours à 8h00 UTC
+jobs:
+  run_pipeline:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRE_USER: ${{ secrets.DB_USER }}
+          POSTGRE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRE_DB: ${{ secrets.DB_NAME }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      # Etape 1: Récupérer notre code (le git clone)
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # Etape 2: Configurer Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+        
+      # Etape 3: Installer les dépendances
+      - name: Installer les dépendances
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+      
+      # Etape 4: Lancer le script E-L
+      - name: Exécuter le script d'extraction et de chargement
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          DB_USER: ${{ secrets.DB_HOST }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+        run: python src/extract_load.py
+
+      # Etape 5: Configurer le profil DBT
+      - name: Créer le profile.yml pour DBT
+        run: |
+          mkdir -p ~/.dbt
+          echo "dbt_stock_project:
+            target: prod
+            outputs:
+              prod:
+                type: postgres
+                host: localhost
+                user: {{ secrets.DB_USER }}
+                password: {{ secrets.DB_PASSWORD }}
+                port: 5432
+                dbname: {{ secrets.DB_NAME }}
+                schema: dbt_analytics" > ~/.dbt/profiles.yml
+
+      # Etape 6: Lancer dbt (Transform)
+      - name: Lancer la pipeline DBT
+        run: dbt run --project-dir ./dbt_stock_project
+
+
