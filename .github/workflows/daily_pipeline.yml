@@ -43,12 +43,14 @@ jobs:
       - name: Exécuter le script d'extraction et de chargement
         env:
           API_KEY: ${{ secrets.API_KEY }}
-          DB_USER: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_HOST: localhost
           DB_PORT: 5432
-        run: python src/extract_load.py
+        run: |
+          source venv/bin/activate
+          python src/extract_load.py
 
       # Etape 5: Configurer le profil DBT
       - name: Créer le profile.yml pour DBT
@@ -68,6 +70,8 @@ jobs:
 
       # Etape 6: Lancer dbt (Transform)
       - name: Lancer la pipeline DBT
-        run: dbt run --project-dir ./dbt_stock_project
+        run: |
+          source venv/bin/activate
+          dbt run --project-dir ./dbt_stock_project
 
 
