@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: stg_raw_stock_data
+    description: "Modèle de staging nettoyant les données brutes d'actions"
+
+    columns:
+      - name: trade_date
+        description: "Le jour de la transaction"
+        tests:
+          - not_null
+        
+      - name: symbol
+        description: "Le symbole boursier de l'action"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['AAPL', 'MSFT', 'GOOGL']
+      
+      - name: closing_price
+        description: "Le prix de clôture"
+        tests:
+          - not_null
+  
+        
