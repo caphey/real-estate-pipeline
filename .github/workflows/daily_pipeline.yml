@@ -56,20 +56,27 @@ jobs:
       - name: Créer le profile.yml pour DBT
         run: |
           mkdir -p ~/.dbt
-          echo "dbt_stock_project:
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          dbt_stock_project:
             target: prod
             outputs:
               prod:
                 type: postgres
                 host: localhost
-                user: {{ secrets.DB_USER }}
-                password: {{ secrets.DB_PASSWORD }}
+                user: "{{ env_var('DBT_USER') }}"
+                password: "{{ env_var('DBT_PASS') }}"
                 port: 5432
-                dbname: {{ secrets.DB_NAME }}
-                schema: dbt_analytics" > ~/.dbt/profiles.yml
+                dbname: "{{ env_var('DBT_DBNAME') }}"
+                schema: dbt_analytics
+          EOF
 
       # Etape 6: Lancer dbt (Transform)
       - name: Lancer la pipeline DBT
+        env:
+          DBT_USER: ${{ secrets.DB_USER }}
+          DBT_PASS: ${{ secrets.DB_PASSWORD }}
+          DBT_DBNAME: ${{ secrets.DB_NAME }}
         run: |
           source venv/bin/activate
           dbt run --project-dir ./dbt_stock_project
