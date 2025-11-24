@@ -6,7 +6,7 @@ Ce projet est un pipeline de données **End-to-End (E-L-T)** complet.
 
 L'objectif est de collecter quotidiennement des données boursières depuis une API publique, de les stocker dans un Data Warehouse, de les transformer en modèles analytiques propres, et d'orchestrer ce flux de manière fiable et automatisée.
 
-## 🏛️ Architecture du Pipeline
+## Architecture du Pipeline
 
 Ce projet suit une architecture E-L-T moderne orchestrée par un outil de CI/CD.
 
@@ -29,7 +29,7 @@ Ce projet suit une architecture E-L-T moderne orchestrée par un outil de CI/CD.
 [dbt (Test)] ---> (Alerte si échec)
 ```
 
-## 🛠️ Stack Technique
+## Stack Technique
 
 * **Extraction & Chargement (E-L) :** **Python** (`requests`, `psycopg2`, `python-dotenv`)
 * **Infrastructure (DWH) :** **PostgreSQL** (tournant sur **Docker**)
@@ -38,7 +38,7 @@ Ce projet suit une architecture E-L-T moderne orchestrée par un outil de CI/CD.
 * **Orchestration & CI/CD :** **GitHub Actions**
 * **Tests de Qualité :** **dbt test**
 
-## ✨ Fonctionnalités Clés
+## Fonctionnalités Clés
 
 * **Infrastructure Reproductible :** `docker-compose.yml` permet de lancer une base de données PostgreSQL identique en une seule commande (`docker-compose up`).
 * **Tests de Qualité des Données :** Des tests `dbt` sont en place pour garantir la fiabilité des données (ex: `not_null`, `unique`, `accepted_values` et des tests singuliers comme `closing_price > 0`).
@@ -46,7 +46,7 @@ Ce projet suit une architecture E-L-T moderne orchestrée par un outil de CI/CD.
 * **Gestion des Secrets :** Les clés d'API et mots de passe de BDD sont gérés de manière sécurisée via un fichier `.env` en local et les `GitHub Secrets` pour la production.
 * **Documentation & Lignage :** Le projet dbt est documenté. Le lignage des données (de la source brute au "mart" final) peut être visualisé avec `dbt docs generate` & `dbt docs serve`.
 
-## 🚀 Comment l'exécuter en local
+## Comment l'exécuter en local
 
 1.  **Cloner le dépôt :**
     ```bash
